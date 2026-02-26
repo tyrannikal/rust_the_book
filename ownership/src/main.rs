@@ -3,15 +3,15 @@ fn main() {
     println!("the first word is: {}", get_first_word(a_string))
 }
 
-fn get_first_word(a_string: &str) -> String {
-    let mut result = String::new();
+fn get_first_word(a_string: &str) -> &str {
+    let mut count = 0;
 
     for a_char in a_string.chars() {
         if a_char != ' ' {
-            result.push(a_char);
+            count += 1;
         } else {
             break;
         }
     }
-    result
+    &a_string[..count]
 }

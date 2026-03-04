@@ -23,11 +23,17 @@ impl Message {
     }
 }
 
+#[derive(Debug)]
+enum UsState {
+    Alaska,
+    Alabama,
+}
+
 enum Coin {
     Penny,
     Nickel,
     Dime,
-    Quarter,
+    Quarter(UsState),
 }
 
 fn value_in_cents(coin: Coin) -> u8 {
@@ -38,8 +44,26 @@ fn value_in_cents(coin: Coin) -> u8 {
         }
         Coin::Nickel => 5,
         Coin::Dime => 10,
-        Coin::Quarter => 25,
+        Coin::Quarter(state) => {
+            println!("state: {state:?}");
+            25
+        }
     }
+}
+
+fn plus_one(x: Option<i32>) -> Option<i32> {
+    match x {
+        None => None,
+        Some(x) => {
+            println!("{}", (x + 1));
+            Some(x + 1)
+        }
+    }
+}
+// TODO: Reindeer games
+enum Reindeer {
+    Dasher,
+    Rudolph,
 }
 
 fn main() {
@@ -71,6 +95,10 @@ fn main() {
     value_in_cents(coin2);
     let coin3 = Coin::Dime;
     value_in_cents(coin3);
-    let coin4 = Coin::Quarter;
+    let coin4 = Coin::Quarter(UsState::Alaska);
     value_in_cents(coin4);
+    let coin5 = Coin::Quarter(UsState::Alabama);
+    value_in_cents(coin5);
+
+    println!("the plus_one of 5 is: {:?}", plus_one(Some(5)));
 }

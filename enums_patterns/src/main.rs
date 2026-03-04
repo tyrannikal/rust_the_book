@@ -60,10 +60,42 @@ fn plus_one(x: Option<i32>) -> Option<i32> {
         }
     }
 }
-// TODO: Reindeer games
+
+#[derive(Debug)]
+enum Team {
+    Red,
+    Green,
+}
+
 enum Reindeer {
-    Dasher,
+    Dasher(Team),
+    Dancer(Team),
+    Prancer(Team),
+    Vixen(Team),
     Rudolph,
+    Klobbertron(Option<Team>),
+    Fng,
+}
+
+impl Reindeer {
+    fn on_squad(deer: Reindeer) {
+        match deer {
+            Reindeer::Rudolph => println!("You lose! Good day, sir!"),
+            other => match other {
+                Reindeer::Dasher(team)
+                | Reindeer::Dancer(team)
+                | Reindeer::Prancer(team)
+                | Reindeer::Vixen(team) => {
+                    println!("On the squad! Team {team:?}")
+                }
+                Reindeer::Klobbertron(team) => match team {
+                    Some(team) => println!("On the squad! Team {team:?}"),
+                    None => println!("Maybe next year..."),
+                },
+                _ => println!("Who's the new guy?"),
+            },
+        }
+    }
 }
 
 fn main() {
@@ -101,4 +133,21 @@ fn main() {
     value_in_cents(coin5);
 
     println!("the plus_one of 5 is: {:?}", plus_one(Some(5)));
+
+    let deer1 = Reindeer::Dasher(Team::Red);
+    Reindeer::on_squad(deer1);
+    let deer2 = Reindeer::Dancer(Team::Red);
+    Reindeer::on_squad(deer2);
+    let deer3 = Reindeer::Prancer(Team::Green);
+    Reindeer::on_squad(deer3);
+    let deer4 = Reindeer::Vixen(Team::Green);
+    Reindeer::on_squad(deer4);
+    let deer5 = Reindeer::Rudolph;
+    Reindeer::on_squad(deer5);
+    let deer6 = Reindeer::Klobbertron(None);
+    Reindeer::on_squad(deer6);
+    let deer7 = Reindeer::Klobbertron(Some(Team::Red));
+    Reindeer::on_squad(deer7);
+    let deer8 = Reindeer::Fng;
+    Reindeer::on_squad(deer8);
 }

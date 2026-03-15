@@ -27,6 +27,32 @@ impl Message {
 enum UsState {
     Alaska,
     Alabama,
+    Floribama,
+}
+
+impl UsState {
+    fn existed_in(&self, year: u16) -> bool {
+        match self {
+            UsState::Alabama => year >= 1819,
+            UsState::Alaska => year >= 1959,
+            UsState::Floribama => year >= 1941,
+        }
+    }
+}
+
+fn describe_state_quarter(coin: Coin) -> Option<String> {
+    let state = if let Coin::Quarter(state) = coin {
+        state
+    } else {
+        return None;
+    };
+
+    if state.existed_in(1942) {
+        println!("{state:?} is pretty old, for America!");
+        Some(format!("{state:?} is pretty old, for America!"))
+    } else {
+        Some(format!("{state:?} is relatively new."))
+    }
 }
 
 enum Coin {
@@ -78,7 +104,7 @@ enum Reindeer {
 }
 
 impl Reindeer {
-    fn on_squad(deer: Reindeer) {
+    fn on_squad(deer: &Reindeer) {
         match deer {
             Reindeer::Rudolph => println!("You lose! Good day, sir!"),
             other => match other {
@@ -131,23 +157,39 @@ fn main() {
     value_in_cents(coin4);
     let coin5 = Coin::Quarter(UsState::Alabama);
     value_in_cents(coin5);
+    let coin6 = Coin::Quarter(UsState::Floribama);
+    describe_state_quarter(coin6);
 
     println!("the plus_one of 5 is: {:?}", plus_one(Some(5)));
 
     let deer1 = Reindeer::Dasher(Team::Red);
-    Reindeer::on_squad(deer1);
+    Reindeer::on_squad(&deer1);
     let deer2 = Reindeer::Dancer(Team::Red);
-    Reindeer::on_squad(deer2);
+    Reindeer::on_squad(&deer2);
     let deer3 = Reindeer::Prancer(Team::Green);
-    Reindeer::on_squad(deer3);
+    Reindeer::on_squad(&deer3);
     let deer4 = Reindeer::Vixen(Team::Green);
-    Reindeer::on_squad(deer4);
+    Reindeer::on_squad(&deer4);
     let deer5 = Reindeer::Rudolph;
-    Reindeer::on_squad(deer5);
+    Reindeer::on_squad(&deer5);
     let deer6 = Reindeer::Klobbertron(None);
-    Reindeer::on_squad(deer6);
+    Reindeer::on_squad(&deer6);
     let deer7 = Reindeer::Klobbertron(Some(Team::Red));
-    Reindeer::on_squad(deer7);
+    Reindeer::on_squad(&deer7);
     let deer8 = Reindeer::Fng;
-    Reindeer::on_squad(deer8);
+    Reindeer::on_squad(&deer8);
+
+    let config_max = Some(3u8);
+    if let Some(max) = config_max {
+        println!("The maximum is configured to be {max}");
+    }
+
+    let coin6 = Coin::Penny;
+    let mut count = 0;
+    if let Coin::Quarter(state) = coin6 {
+        println!("State quarter from {state:?}!");
+    } else {
+        count += 1;
+        println!("the count is {count}!");
+    }
 }

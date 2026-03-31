@@ -13,18 +13,12 @@ mod tests {
     }
 }
 
-mod front_of_house {
-    mod hosting {
-        fn add_to_waitlist() {}
+mod front_of_house;
 
-        fn seat_at_table() {}
-    }
+use crate::front_of_house::hosting;
 
-    mod serving {
-        fn take_order() {}
-
-        fn serve_order() {}
-
-        fn take_payment() {}
+mod customer {
+    pub fn eat_at_restaurant() {
+        super::hosting::add_to_waitlist();
     }
 }

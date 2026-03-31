@@ -1,0 +1,92 @@
+use std::{collections::HashMap, io};
+
+fn main() {
+    println!(
+        "I will find the mean, median, and mode of a random list of integers where you choose the size of the list and lower/upper value limits."
+    );
+
+    let size: u64 = loop {
+        let a_size = get_input("List size:");
+        if a_size > 0 {
+            break a_size as u64;
+        } else {
+            println!("Size must be greater than 0");
+        }
+    };
+    let min: i64 = loop {
+        let val = get_input("Minimum allowed value:");
+        if val < i64::MAX {
+            break val;
+        }
+        println!("Minimum value must be less than {}", i64::MAX);
+    };
+    let max: i64 = loop {
+        let val = get_input("Maximum allowed value:");
+        if val > min {
+            break val;
+        }
+        println!("Maximum value must be greater than minimum value");
+    };
+
+    let list = build_list(size, min, max);
+    println!("The mean is: {}", get_mean(&list));
+    println!("The mode is: {}", get_mode(&list));
+}
+
+fn get_input(prompt: &str) -> i64 {
+    loop {
+        println!("{}", prompt);
+        let mut input = String::new();
+
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
+        let Ok(num) = input.trim().parse() else {
+            println!("Must be an integer");
+            continue;
+        };
+        break num;
+    }
+}
+
+fn build_list(size: u64, min: i64, max: i64) -> Vec<i64> {
+    assert!(size > 0, "Size must be greater than 0!");
+    assert!(max > min, "Max must be greater than min!");
+
+    let mut list: Vec<i64> = Vec::with_capacity(size as usize);
+    for _ in 0..size {
+        list.push(rand::random_range(min..=max));
+    }
+    list
+}
+
+fn get_mean(list: &Vec<i64>) -> f64 {
+    assert!(!list.is_empty(), "Empty list!");
+
+    let mut total: i128 = 0;
+    for &i in list {
+        total += i as i128;
+    }
+    total as f64 / list.len() as f64
+}
+
+fn get_mode(list: &Vec<i64>) -> i64 {
+    assert!(!list.is_empty(), "Empty list!");
+
+    let mut map = HashMap::new();
+
+    for &i in list {
+        let count = map.entry(i).or_insert(0);
+        *count += 1;
+    }
+
+    let mut current_mode = list[0];
+    for (&key, &value) in &map {
+        if value > *map.get(&current_mode).unwrap() {
+            current_mode = key;
+        }
+    }
+    current_mode
+}
+
+// fn get_median(list: &Vec<i64>) -> i64 {}

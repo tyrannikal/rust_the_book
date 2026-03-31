@@ -30,7 +30,10 @@ fn main() {
 
     let list = build_list(size, min, max);
     println!("The mean is: {}", get_mean(&list));
-    println!("The mode is: {}", get_mode(&list));
+    println!(
+        "The mode(s) is/are (multiple if tied): {:?}",
+        get_mode(&list)
+    );
 }
 
 fn get_input(prompt: &str) -> i64 {
@@ -70,7 +73,7 @@ fn get_mean(list: &Vec<i64>) -> f64 {
     total as f64 / list.len() as f64
 }
 
-fn get_mode(list: &Vec<i64>) -> i64 {
+fn get_mode(list: &Vec<i64>) -> Vec<i64> {
     assert!(!list.is_empty(), "Empty list!");
 
     let mut map = HashMap::new();
@@ -80,10 +83,13 @@ fn get_mode(list: &Vec<i64>) -> i64 {
         *count += 1;
     }
 
-    let mut current_mode = list[0];
-    for (&key, &value) in &map {
-        if value > *map.get(&current_mode).unwrap() {
-            current_mode = key;
+    let mut current_mode = vec![list[0]];
+    for (&key, &count) in &map {
+        let highest_count = *map.get(&current_mode[0]).unwrap();
+        if count > highest_count {
+            current_mode = vec![key];
+        } else if count == highest_count {
+            current_mode.push(key);
         }
     }
     current_mode

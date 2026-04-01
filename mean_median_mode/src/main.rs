@@ -42,10 +42,15 @@ fn main() {
     );
     println!("The mean is: {}", get_mean(&list));
 
-    println!(
-        "The mode(s) is/are (multiple if tied): {:?}",
-        get_mode(&list)
-    );
+    let mode = get_mode(&list);
+    assert!(!mode.is_empty(), "mode is empty!");
+    for i in &mode {
+        assert!(
+            (min..=max).contains(i),
+            "Integer returned as a mode is outside lower/upper value limits!"
+        );
+    }
+    println!("The mode(s) is/are (multiple if tied): {:?}", mode);
 }
 
 fn get_input(prompt: &str) -> i64 {

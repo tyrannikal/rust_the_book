@@ -8,26 +8,16 @@ fn main() {
     let (size, min, max) = get_parameters();
 
     let list = build_list(size, min, max);
-    assert_eq!(
-        list.len(),
-        size as usize,
-        "list length must equal desired size!"
-    );
+    assert_eq!(list.len(), size as usize);
 
     let mean = get_mean(&list);
-    assert!(
-        (mean > min as f64) & (mean < max as f64),
-        "Mean must be within min/max range!"
-    );
-    println!("The mean is: {}", get_mean(&list));
+    assert!((mean > min as f64) & (mean < max as f64));
+    println!("The mean is: {}", mean);
 
     let mode = get_mode(&list);
-    assert!(!mode.is_empty(), "mode is empty!");
+    assert!(!mode.is_empty());
     for i in &mode {
-        assert!(
-            (min..=max).contains(i),
-            "Integer returned as a mode is outside lower/upper value limits!"
-        );
+        assert!((min..=max).contains(i));
     }
     println!("The mode(s) is/are (multiple if tied): {:?}", mode);
 }
@@ -75,8 +65,8 @@ fn get_input(prompt: &str) -> i64 {
 }
 
 fn build_list(size: u64, min: i64, max: i64) -> Vec<i64> {
-    assert!(size > 0, "Size must be greater than 0!");
-    assert!(max > min, "Max must be greater than min!");
+    assert!(size > 0);
+    assert!(max > min);
 
     let mut list: Vec<i64> = Vec::with_capacity(size as usize);
     for _ in 0..size {
@@ -86,7 +76,7 @@ fn build_list(size: u64, min: i64, max: i64) -> Vec<i64> {
 }
 
 fn get_mean(list: &Vec<i64>) -> f64 {
-    assert!(!list.is_empty(), "Empty list!");
+    assert!(!list.is_empty());
 
     let mut total: i128 = 0;
     for &i in list {
@@ -96,7 +86,7 @@ fn get_mean(list: &Vec<i64>) -> f64 {
 }
 
 fn get_mode(list: &Vec<i64>) -> Vec<i64> {
-    assert!(!list.is_empty(), "Empty list!");
+    assert!(!list.is_empty());
 
     let mut map = HashMap::new();
 

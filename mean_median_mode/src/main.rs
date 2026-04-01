@@ -5,28 +5,7 @@ fn main() {
         "I will find the mean, median, and mode of a random list of integers where you choose the size of the list and lower/upper value limits."
     );
 
-    let size: u64 = loop {
-        let a_size = get_input("List size:");
-        if a_size > 0 {
-            break a_size as u64;
-        } else {
-            println!("Size must be greater than 0");
-        }
-    };
-    let min: i64 = loop {
-        let val = get_input("Minimum allowed value:");
-        if val < i64::MAX {
-            break val;
-        }
-        println!("Minimum value must be less than {}", i64::MAX);
-    };
-    let max: i64 = loop {
-        let val = get_input("Maximum allowed value:");
-        if val > min {
-            break val;
-        }
-        println!("Maximum value must be greater than minimum value");
-    };
+    let (size, min, max) = get_parameters();
 
     let list = build_list(size, min, max);
     assert_eq!(
@@ -51,6 +30,32 @@ fn main() {
         );
     }
     println!("The mode(s) is/are (multiple if tied): {:?}", mode);
+}
+
+fn get_parameters() -> (u64, i64, i64) {
+    let size: u64 = loop {
+        let a_size = get_input("List size:");
+        if a_size > 0 {
+            break a_size as u64;
+        } else {
+            println!("Size must be greater than 0");
+        }
+    };
+    let min: i64 = loop {
+        let val = get_input("Minimum allowed value:");
+        if val < i64::MAX {
+            break val;
+        }
+        println!("Minimum value must be less than {}", i64::MAX);
+    };
+    let max: i64 = loop {
+        let val = get_input("Maximum allowed value:");
+        if val > min {
+            break val;
+        }
+        println!("Maximum value must be greater than minimum value");
+    };
+    (size, min, max)
 }
 
 fn get_input(prompt: &str) -> i64 {

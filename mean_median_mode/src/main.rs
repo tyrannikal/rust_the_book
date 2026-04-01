@@ -29,7 +29,19 @@ fn main() {
     };
 
     let list = build_list(size, min, max);
+    assert_eq!(
+        list.len(),
+        size as usize,
+        "list length must equal desired size!"
+    );
+
+    let mean = get_mean(&list);
+    assert!(
+        (mean > min as f64) & (mean < max as f64),
+        "Mean must be within min/max range!"
+    );
     println!("The mean is: {}", get_mean(&list));
+
     println!(
         "The mode(s) is/are (multiple if tied): {:?}",
         get_mode(&list)

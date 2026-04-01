@@ -11,15 +11,16 @@ fn main() {
     assert_eq!(list.len(), size as usize);
 
     let mean = get_mean(&list);
-    assert!((mean > min as f64) & (mean < max as f64));
+    assert!((min as f64..max as f64).contains(&mean));
     println!("The mean is: {}", mean);
 
-    let mode = get_mode(&list);
+    let (count, mode) = get_mode(&list);
+    assert!(count > 0);
     assert!(!mode.is_empty());
     for i in &mode {
         assert!((min..=max).contains(i));
     }
-    println!("The mode(s) is/are (multiple if tied): {:?}", mode);
+    println!("With {count} occurrances, the mode(s) is/are: {:?}", mode);
 }
 
 fn get_parameters() -> (u64, i64, i64) {
@@ -85,7 +86,7 @@ fn get_mean(list: &Vec<i64>) -> f64 {
     total as f64 / list.len() as f64
 }
 
-fn get_mode(list: &Vec<i64>) -> Vec<i64> {
+fn get_mode(list: &Vec<i64>) -> (u64, Vec<i64>) {
     assert!(!list.is_empty());
 
     let mut map = HashMap::new();
@@ -96,15 +97,16 @@ fn get_mode(list: &Vec<i64>) -> Vec<i64> {
     }
 
     let mut current_mode = vec![list[0]];
+    let mut highest_count = *map.get(&current_mode[0]).unwrap();
     for (&key, &count) in &map {
-        let highest_count = *map.get(&current_mode[0]).unwrap();
         if count > highest_count {
             current_mode = vec![key];
+            highest_count = count;
         } else if count == highest_count {
             current_mode.push(key);
         }
     }
-    current_mode
+    (highest_count, current_mode)
 }
 
 // fn get_median(list: &Vec<i64>) -> i64 {}

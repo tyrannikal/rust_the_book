@@ -120,11 +120,9 @@ fn get_median(list: &mut [i64]) -> f64 {
     assert!(!list.is_empty());
 
     let middle_index = list.len() / 2;
-    let mut list_copy = Vec::from(&*list);
 
     if list.len().is_multiple_of(2) {
-        (quickselect(list, middle_index - 1) + quickselect(&mut list_copy, middle_index)) as f64
-            / 2.0
+        (quickselect(list, middle_index - 1) + quickselect(list, middle_index)) as f64 / 2.0
     } else {
         quickselect(list, middle_index) as f64
     }

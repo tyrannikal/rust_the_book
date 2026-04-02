@@ -7,11 +7,11 @@ fn main() {
 
     let (size, min, max) = get_parameters();
 
-    let list = build_list(size, min, max);
+    let mut list = build_list(size, min, max);
     assert_eq!(list.len(), size as usize);
 
     let mean = get_mean(&list);
-    assert!((min as f64..max as f64).contains(&mean));
+    assert!((min as f64..=max as f64).contains(&mean));
     println!("The mean is: {}", mean);
 
     let (count, mode) = get_mode(&list);
@@ -20,7 +20,14 @@ fn main() {
     for i in &mode {
         assert!((min..=max).contains(i));
     }
-    println!("With {count} occurrances, the mode(s) is/are: {:?}", mode);
+    println!("With {count} occurrences, the mode(s) is/are: {:?}", mode);
+
+    let median = get_median(&mut list);
+    assert!((min as f64..=max as f64).contains(&median));
+    if !list.len().is_multiple_of(2) {
+        assert!(median.fract() == 0 as f64);
+    }
+    println!("The median is: {}", median);
 }
 
 fn get_parameters() -> (u64, i64, i64) {
@@ -76,7 +83,7 @@ fn build_list(size: u64, min: i64, max: i64) -> Vec<i64> {
     list
 }
 
-fn get_mean(list: &Vec<i64>) -> f64 {
+fn get_mean(list: &[i64]) -> f64 {
     assert!(!list.is_empty());
 
     let mut total: i128 = 0;
@@ -86,7 +93,7 @@ fn get_mean(list: &Vec<i64>) -> f64 {
     total as f64 / list.len() as f64
 }
 
-fn get_mode(list: &Vec<i64>) -> (u64, Vec<i64>) {
+fn get_mode(list: &[i64]) -> (u64, Vec<i64>) {
     assert!(!list.is_empty());
 
     let mut map = HashMap::new();
@@ -96,8 +103,8 @@ fn get_mode(list: &Vec<i64>) -> (u64, Vec<i64>) {
         *count += 1;
     }
 
-    let mut current_mode = vec![list[0]];
-    let mut highest_count = *map.get(&current_mode[0]).unwrap();
+    let mut current_mode = Vec::new();
+    let mut highest_count = 0;
     for (&key, &count) in &map {
         if count > highest_count {
             current_mode = vec![key];
@@ -109,4 +116,62 @@ fn get_mode(list: &Vec<i64>) -> (u64, Vec<i64>) {
     (highest_count, current_mode)
 }
 
-// fn get_median(list: &Vec<i64>) -> i64 {}
+fn get_median(list: &mut [i64]) -> f64 {
+    assert!(!list.is_empty());
+
+    let middle_index = list.len() / 2;
+    let mut list_copy = Vec::from(&*list);
+
+    if list.len().is_multiple_of(2) {
+        (quickselect(list, middle_index - 1) + quickselect(&mut list_copy, middle_index)) as f64
+            / 2.0
+    } else {
+        quickselect(list, middle_index) as f64
+    }
+}
+
+fn quickselect(list: &mut [i64], target: usize) -> i64 {
+    assert!(!list.is_empty());
+    assert!(target < list.len());
+
+    let mut lo = 0;
+    let mut hi = list.len() - 1;
+
+    while lo < hi {
+        let pivot_idx = partition(list, lo, hi);
+
+        if target <= pivot_idx {
+            hi = pivot_idx;
+        } else {
+            lo = pivot_idx + 1;
+        }
+    }
+    list[lo]
+}
+
+fn partition(list: &mut [i64], lo: usize, hi: usize) -> usize {
+    assert!(!list.is_empty());
+    assert!(hi < list.len());
+    assert!(lo <= hi);
+
+    let pivot = list[lo];
+    let mut i = lo;
+    let mut j = hi;
+
+    loop {
+        while list[i] < pivot {
+            i += 1;
+        }
+
+        while list[j] > pivot {
+            j -= 1;
+        }
+
+        if i >= j {
+            return j;
+        }
+        list.swap(i, j);
+        i += 1;
+        j -= 1;
+    }
+}

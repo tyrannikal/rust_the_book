@@ -8,7 +8,7 @@ fn main() {
     let (size, min, max) = get_parameters();
 
     let mut list = build_list(size, min, max);
-    assert_eq!(list.len(), size as usize);
+    assert_eq!(list.len(), size);
 
     let mean = get_mean(&list);
     assert!((min as f64..=max as f64).contains(&mean));
@@ -25,16 +25,16 @@ fn main() {
     let median = get_median(&mut list);
     assert!((min as f64..=max as f64).contains(&median));
     if !list.len().is_multiple_of(2) {
-        assert!(median.fract() == 0 as f64);
+        assert!(median.fract() == 0.0);
     }
     println!("The median is: {}", median);
 }
 
-fn get_parameters() -> (u64, i64, i64) {
-    let size: u64 = loop {
+fn get_parameters() -> (usize, i64, i64) {
+    let size: usize = loop {
         let a_size = get_input("List size:");
         if a_size > 0 {
-            break a_size as u64;
+            break a_size as usize;
         } else {
             println!("Size must be greater than 0");
         }
@@ -72,11 +72,11 @@ fn get_input(prompt: &str) -> i64 {
     }
 }
 
-fn build_list(size: u64, min: i64, max: i64) -> Vec<i64> {
+fn build_list(size: usize, min: i64, max: i64) -> Vec<i64> {
     assert!(size > 0);
     assert!(max > min);
 
-    let mut list: Vec<i64> = Vec::with_capacity(size as usize);
+    let mut list: Vec<i64> = Vec::with_capacity(size);
     for _ in 0..size {
         list.push(rand::random_range(min..=max));
     }

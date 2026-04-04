@@ -1,11 +1,24 @@
 use std::{collections::HashMap, io};
 
+enum UserInput {
+    Number(i64),
+    Quit,
+}
+
 fn main() {
     println!(
         "I will find the mean, median, and mode of a random list of integers where you choose the size of the list and lower/upper value limits."
     );
 
-    let (size, min, max) = get_parameters();
+    loop {
+        if go_baby_go().is_none() {
+            break;
+        }
+    }
+}
+
+fn go_baby_go() -> Option<()> {
+    let (size, min, max) = get_parameters()?;
 
     let mut list = build_list(size, min, max);
     assert_eq!(list.len(), size);
@@ -28,35 +41,36 @@ fn main() {
         assert!(median.fract() == 0.0);
     }
     println!("The median is: {}", median);
+
+    Some(())
 }
 
-fn get_parameters() -> (usize, i64, i64) {
+fn get_parameters() -> Option<(usize, i64, i64)> {
     let size: usize = loop {
-        let a_size = get_input("List size:");
-        if a_size > 0 {
-            break a_size as usize;
-        } else {
-            println!("Size must be greater than 0");
+        match get_input("List size:") {
+            UserInput::Quit => return None,
+            UserInput::Number(val) if val > 0 => break val as usize,
+            _ => println!("Size must be greater than 0"),
         }
     };
     let min: i64 = loop {
-        let val = get_input("Minimum allowed value:");
-        if val < i64::MAX {
-            break val;
+        match get_input("Minimum allowed value:") {
+            UserInput::Quit => return None,
+            UserInput::Number(val) if val < i64::MAX => break val,
+            _ => println!("Minimum value must be less than {}", i64::MAX),
         }
-        println!("Minimum value must be less than {}", i64::MAX);
     };
     let max: i64 = loop {
-        let val = get_input("Maximum allowed value:");
-        if val > min {
-            break val;
+        match get_input("Maximum allowed value:") {
+            UserInput::Quit => return None,
+            UserInput::Number(val) if val > min => break val,
+            _ => println!("Maximum value must be greater than minimum value"),
         }
-        println!("Maximum value must be greater than minimum value");
     };
-    (size, min, max)
+    Some((size, min, max))
 }
 
-fn get_input(prompt: &str) -> i64 {
+fn get_input(prompt: &str) -> UserInput {
     loop {
         println!("{}", prompt);
         let mut input = String::new();
@@ -64,11 +78,17 @@ fn get_input(prompt: &str) -> i64 {
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
-        let Ok(num) = input.trim().parse() else {
-            println!("Must be an integer");
-            continue;
-        };
-        break num;
+
+        let trimmed = input.trim();
+
+        if trimmed == "q" {
+            break UserInput::Quit;
+        }
+
+        match trimmed.parse() {
+            Ok(num) => break UserInput::Number(num),
+            Err(_) => println!("Must be an integer (or 'q' to quit)"),
+        }
     }
 }
 

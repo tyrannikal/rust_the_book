@@ -10,9 +10,19 @@ fn main() {
         "I will find the mean, median, and mode of a random list of integers where you choose the size of the list and lower/upper value limits."
     );
 
-    loop {
+    'calc: loop {
         if go_baby_go().is_none() {
             break;
+        }
+
+        println!("Run calculations for another list? (y/n):");
+        loop {
+            let response = get_input().to_lowercase();
+            match response.as_str() {
+                "n" | "q" => break 'calc,
+                "y" => break,
+                _ => println!("Press 'y', 'n', or 'q' to quit at anytime"),
+            }
         }
     }
 }
@@ -47,21 +57,21 @@ fn go_baby_go() -> Option<()> {
 
 fn get_parameters() -> Option<(usize, i64, i64)> {
     let size: usize = loop {
-        match get_input("List size:") {
+        match get_values("List size:") {
             UserInput::Quit => return None,
             UserInput::Number(val) if val > 0 => break val as usize,
             _ => println!("Size must be greater than 0"),
         }
     };
     let min: i64 = loop {
-        match get_input("Minimum allowed value:") {
+        match get_values("Minimum allowed value:") {
             UserInput::Quit => return None,
             UserInput::Number(val) if val < i64::MAX => break val,
             _ => println!("Minimum value must be less than {}", i64::MAX),
         }
     };
     let max: i64 = loop {
-        match get_input("Maximum allowed value:") {
+        match get_values("Maximum allowed value:") {
             UserInput::Quit => return None,
             UserInput::Number(val) if val > min => break val,
             _ => println!("Maximum value must be greater than minimum value"),
@@ -70,22 +80,26 @@ fn get_parameters() -> Option<(usize, i64, i64)> {
     Some((size, min, max))
 }
 
-fn get_input(prompt: &str) -> UserInput {
+fn get_input() -> String {
+    let mut input = String::new();
+
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read line");
+
+    input.trim().to_string()
+}
+
+fn get_values(prompt: &str) -> UserInput {
     loop {
         println!("{}", prompt);
-        let mut input = String::new();
+        let values = get_input().to_lowercase();
 
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read line");
-
-        let trimmed = input.trim();
-
-        if trimmed == "q" {
+        if values == "q" {
             break UserInput::Quit;
         }
 
-        match trimmed.parse() {
+        match values.parse() {
             Ok(num) => break UserInput::Number(num),
             Err(_) => println!("Must be an integer (or 'q' to quit)"),
         }

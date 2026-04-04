@@ -18,7 +18,7 @@ fn main() {
 
         println!("Run calculations for another list? (y/n):");
         loop {
-            match get_input().to_lowercase().as_str() {
+            match get_input().as_str() {
                 "n" | "q" => break 'calc,
                 "y" => break,
                 _ => println!("Press 'y' or 'n'. Press 'q' to quit at anytime"),
@@ -93,7 +93,7 @@ fn get_input() -> String {
 fn get_values(prompt: &str) -> UserInput {
     loop {
         println!("{}", prompt);
-        let values = get_input().to_lowercase();
+        let values = get_input();
 
         if values == "q" {
             break UserInput::Quit;

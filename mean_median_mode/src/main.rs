@@ -87,7 +87,7 @@ fn get_input() -> String {
         .read_line(&mut input)
         .expect("Failed to read line");
 
-    input.trim().to_string()
+    input.trim().to_lowercase()
 }
 
 fn get_values(prompt: &str) -> UserInput {

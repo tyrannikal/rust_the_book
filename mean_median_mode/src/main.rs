@@ -7,7 +7,8 @@ enum UserInput {
 
 fn main() {
     println!(
-        "I will find the mean, median, and mode of a random list of integers where you choose the size of the list and lower/upper value limits."
+        "I will find the mean, median, and mode of a random list of integers where you choose the
+            size of the list and lower/upper value limits. Press 'q' to quit at anytime."
     );
 
     'calc: loop {
@@ -17,11 +18,10 @@ fn main() {
 
         println!("Run calculations for another list? (y/n):");
         loop {
-            let response = get_input().to_lowercase();
-            match response.as_str() {
+            match get_input().to_lowercase().as_str() {
                 "n" | "q" => break 'calc,
                 "y" => break,
-                _ => println!("Press 'y', 'n', or 'q' to quit at anytime"),
+                _ => println!("Press 'y' or 'n'. Press 'q' to quit at anytime"),
             }
         }
     }
